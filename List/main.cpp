@@ -1,4 +1,4 @@
-//#include "Tests/1BasicConstructorsTest.h"
+#include "Tests/1BasicConstructorsTest.h"
 //#include "Tests/2PushFrontBackTest.h"
 //#include "Tests/3PopFrontBackTest.h"
 //#include "Tests/4DestructorCallTest.h"
@@ -23,6 +23,7 @@
 
 #include <iostream>
 
-int main() {
-  std::cout << "All Tests Passed!";
+int main()
+{
+	std::cout << "All Tests Passed!";
 }
