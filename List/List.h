@@ -180,6 +180,7 @@ public:
 	void pop_back();
 	void insert(const iterator& iter, const T& val);
 	void erase(const iterator& iter);
+	void merge(List& other);
 
 	iterator begin();
 	iterator end();
@@ -453,6 +454,34 @@ void List<T>::erase(const iterator& iter)
 
 	delete iter._current;
 	--_size;
+}
+
+template<typename T>
+void List<T>::merge(List& other)
+{
+	if (this == &other) return;
+
+	auto thisIter = begin();
+	auto otherIter = other.begin();
+
+	while (thisIter != end() && otherIter != other.end())
+	{
+		if (*(otherIter) < *(thisIter)) 
+		{
+			insert(thisIter, *(otherIter));
+			++otherIter;
+		}
+		else 
+			++thisIter;
+	}
+
+	while (otherIter != other.end())
+	{
+		push_back(*otherIter);
+		++otherIter;
+	}
+
+	other.clear();
 }
 
 #pragma endregion
