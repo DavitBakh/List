@@ -14,11 +14,13 @@ private:
 
 	struct Node
 	{
-		T _val;
+		T* _val;
 		Node* _next;
 		Node* _prev;
 
+		Node(T* val = nullptr, Node* next = nullptr, Node* prev = nullptr);
 		Node(const T& val, Node* next = nullptr, Node* prev = nullptr);
+		~Node();
 	};
 
 	Node* _head;
@@ -150,8 +152,9 @@ public:
 
 #pragma endregion
 
-
-	List(size_t size = 0, const T& val = T());
+	List();
+	List(size_t size);
+	List(size_t size, const T& val);
 	List(const List& other);
 	List(std::initializer_list<T> initList);
 	template <std::input_iterator iter>
@@ -194,32 +197,24 @@ public:
 #pragma region CtorsAndDestructors
 
 template<typename T>
-List<T>::List(size_t size, const T& val) : _head(new Node(T())), _tail(new Node(T())), _size(size)
+List<T>::List() : _head(new Node()), _tail(new Node()), _size(0)
 {
-	/*Node** curNode = &_head;
-	for (std::size_t i = 0; i < size; i++)
+	_head->_next = _tail;
+	_tail->_prev = _head;
+}
+
+template<typename T>
+List<T>::List(size_t size) : List()
+{
+	for (size_t i = 0; i < size; i++)
 	{
-		*curNode = new Node(val);
-		curNode = &(*curNode)->_next;
-	}*/
-
-
-
-	/*if (size == 0)
-		return;
-
-	_head = new Node(val);
-	_tail = _head;
-
-	Node* curr = _head;
-	for (size_t i = 1; i < size; ++i)
-	{
-		curr->_next = new Node(val, nullptr, curr);
-		curr = curr->_next;
+		push_back(T());
 	}
+}
 
-	_tail = curr;*/
-
+template<typename T>
+List<T>::List(size_t size, const T& val) : _head(new Node()), _tail(new Node()), _size(size)
+{
 
 	Node* temp = _head;
 	for (size_t i = 0; i < size; i++)
@@ -233,7 +228,7 @@ List<T>::List(size_t size, const T& val) : _head(new Node(T())), _tail(new Node(
 }
 
 template<typename T>
-List<T>::List(const List& other) : _head(new Node(T())), _tail(new Node(T())), _size(other._size)
+List<T>::List(const List& other) : _head(new Node()), _tail(new Node()), _size(other._size)
 {
 	_head->_next = _tail;
 	_tail->_prev = _head;
@@ -241,13 +236,13 @@ List<T>::List(const List& other) : _head(new Node(T())), _tail(new Node(T())), _
 	Node* curr = other._head->_next;
 	while (curr != other._tail)
 	{
-		push_back(curr->_val);
+		push_back(*(curr->_val));
 		curr = curr->_next;
 	}
 }
 
 template<typename T>
-List<T>::List(std::initializer_list<T> initList) : _head(new Node(T())), _tail(new Node(T())), _size(initList.size())
+List<T>::List(std::initializer_list<T> initList) : _head(new Node()), _tail(new Node()), _size(initList.size())
 {
 	Node* temp = _head;
 	for (auto iter = initList.begin(); iter != initList.end(); ++iter)
@@ -262,7 +257,7 @@ List<T>::List(std::initializer_list<T> initList) : _head(new Node(T())), _tail(n
 
 template<typename T>
 template<std::input_iterator iter>
-List<T>::List(iter begin, iter end) : _head(new Node(T())), _tail(new Node(T()))
+List<T>::List(iter begin, iter end) : _head(new Node()), _tail(new Node())
 {
 	Node* temp = _head;
 	for (auto iter = begin; iter != end; ++iter)
@@ -292,7 +287,16 @@ List<T>::~List()
 }
 
 template<typename T>
-List<T>::Node::Node(const T& val, Node* next, Node* prev) : _val(val), _next(next), _prev(prev) { }
+List<T>::Node::~Node()
+{
+	delete _val;
+}
+
+template<typename T>
+List<T>::Node::Node(T* val, Node* next, Node* prev) : _val(val), _next(next), _prev(prev) { }
+
+template<typename T>
+List<T>::Node::Node(const T& val, Node* next, Node* prev) : _val(new T(val)), _next(next), _prev(prev) { }
 
 template<typename T>
 List<T>::iterator::iterator(Node* ptr) : _current(ptr) { }
@@ -322,25 +326,25 @@ bool List<T>::empty()
 template<typename T>
 T& List<T>::front()
 {
-	return _head->_next->_val;
+	return *(_head->_next->_val);
 }
 
 template<typename T>
 const T& List<T>::front() const
 {
-	return _head->_next->_val;
+	return *(_head->_next->_val);
 }
 
 template<typename T>
 T& List<T>::back()
 {
-	return _tail->_prev->_val;
+	return *(_tail->_prev->_val);
 }
 
 template<typename T>
 const T& List<T>::back() const
 {
-	return _tail->_prev->_val;
+	return *(_tail->_prev->_val);
 }
 
 #pragma endregion
@@ -430,7 +434,7 @@ bool operator==(const List<T>& lhs, const List<T>& rhs)
 
 	while (lhsP != nullptr && rhsP != nullptr)
 	{
-		if (lhsP->_val != rhsP->_val)
+		if (lhsP->_val && rhsP->_val && *(lhsP->_val) != *(rhsP->_val))
 			return false;
 
 		lhsP = lhsP->_next;
@@ -449,18 +453,14 @@ bool operator!=(const List<T>& lhs, const List<T>& rhs)
 template<typename T>
 List<T>& List<T>::operator=(const List& other)
 {
-	this->~List();
+	if (this == &other) return *this;
 
-	_head = new Node(T());
-	_tail = new Node(T());
-
-	_head->_next = _tail;
-	_tail->_prev = _head;
+	clear();
 
 	Node* curr = other._head->_next;
 	while (curr != other._tail)
 	{
-		push_back(curr->_val);
+		push_back(*(curr->_val));
 		curr = curr->_next;
 	}
 
@@ -486,13 +486,13 @@ List<T>::iterator List<T>::end()
 template<typename T>
 List<T>::iterator::reference List<T>::iterator::operator*() const
 {
-	return _current->_val;
+	return *(_current->_val);
 }
 
 template<typename T>
 List<T>::iterator::pointer List<T>::iterator::operator->() const
 {
-	return &(_current->_val);
+	return _current->_val;
 }
 
 template<typename T>
@@ -564,13 +564,13 @@ List<T>::reverse_iterator List<T>::rend()
 template<typename T>
 List<T>::reverse_iterator::reference List<T>::reverse_iterator::operator*() const
 {
-	return _current->_val;
+	return *(_current->_val);
 }
 
 template<typename T>
 List<T>::reverse_iterator::pointer List<T>::reverse_iterator::operator->() const
 {
-	return &(_current->_val);
+	return _current->_val;
 }
 
 template<typename T>
@@ -654,13 +654,13 @@ List<T>::const_iterator List<T>::cend() const
 template<typename T>
 List<T>::const_iterator::reference List<T>::const_iterator::operator*() const
 {
-	return _current->_val;
+	return *(_current->_val);
 }
 
 template<typename T>
 List<T>::const_iterator::pointer List<T>::const_iterator::operator->() const
 {
-	return &(_current->_val);
+	return _current->_val;
 }
 
 template<typename T>
@@ -743,13 +743,13 @@ List<T>::const_reverse_iterator List<T>::crend() const
 template<typename T>
 List<T>::const_reverse_iterator::reference List<T>::const_reverse_iterator::operator*() const
 {
-	return _current->_val;
+	return *(_current->_val);
 }
 
 template<typename T>
 List<T>::const_reverse_iterator::pointer List<T>::const_reverse_iterator::operator->() const
 {
-	return &(_current->_val);
+	return _current->_val;
 }
 
 template<typename T>
