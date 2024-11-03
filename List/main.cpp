@@ -9,7 +9,7 @@
 #include "Tests/9ClearTest.h"
 #include "Tests/10BasicIteratorTest.h"
 #include "Tests/11ReverseIteratorTest.h"
-//#include "Tests/12ConstIteratorTest.h"
+#include "Tests/12ConstIteratorTest.h"
 //#include "Tests/13ConstReverseIteratorTest.h"
 //#include "Tests/14MemberAccessIteratorTest.h"
 //#include "Tests/15InitializerListConstructorTest.h"

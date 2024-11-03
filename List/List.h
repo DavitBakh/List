@@ -54,6 +54,8 @@ public:
 		iterator operator--(int);
 		bool operator==(const iterator& other) const;
 		bool operator!=(const iterator& other) const;
+
+		friend class const_iterator;
 	};
 
 #pragma endregion
@@ -87,6 +89,38 @@ public:
 
 #pragma endregion
 
+#pragma region Const Iterator
+
+	class const_iterator
+	{
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const T*;
+		using reference = const T&;
+		using iterator_category = std::forward_iterator_tag;
+
+	private:
+		const Node* _current;
+
+	public:
+		const_iterator(const Node* ptr);
+		const_iterator(const iterator& iter);
+
+		const_iterator& operator=(const const_iterator& source);
+		reference  operator*() const;
+		pointer operator->() const;
+		const_iterator& operator++();
+		const_iterator operator++(int);
+		const_iterator& operator--();
+		const_iterator operator--(int);
+		bool operator==(const const_iterator& other) const;
+		bool operator!=(const const_iterator& other) const;
+
+	};
+
+#pragma endregion
+
+
 
 	List(size_t size = 0, const T& val = T());
 	List(const List& other);
@@ -109,6 +143,10 @@ public:
 	iterator end();
 	reverse_iterator rbegin();
 	reverse_iterator rend();
+	const_iterator begin() const;
+	const_iterator end() const;
+	const_iterator cbegin() const;
+	const_iterator cend() const;
 
 	List& operator=(const List& other);
 
@@ -194,6 +232,12 @@ List<T>::iterator::iterator(Node* ptr) : _current(ptr) { }
 
 template<typename T>
 List<T>::reverse_iterator::reverse_iterator(Node* ptr) : _current(ptr) { }
+
+template<typename T>
+List<T>::const_iterator::const_iterator(const Node* ptr) : _current(ptr) { }
+
+template<typename T>
+List<T>::const_iterator::const_iterator(const iterator& iter) : _current(iter._current) {}
 
 #pragma endregion
 
@@ -510,4 +554,94 @@ List<T>::reverse_iterator& List<T>::reverse_iterator::operator=(const reverse_it
 
 
 #pragma endregion
+
+#pragma region Const Iterator
+
+template<typename T>
+List<T>::const_iterator List<T>::begin() const
+{
+	return const_iterator(_head->_next);
+}
+
+template<typename T>
+List<T>::const_iterator List<T>::end() const
+{
+	return const_iterator(_tail);
+}
+
+template<typename T>
+List<T>::const_iterator List<T>::cbegin() const
+{
+	return const_iterator(_head->_next);
+}
+
+template<typename T>
+List<T>::const_iterator List<T>::cend() const
+{
+	return const_iterator(_tail);
+}
+
+template<typename T>
+List<T>::const_iterator::reference List<T>::const_iterator::operator*() const
+{
+	return _current->_val;
+}
+
+template<typename T>
+List<T>::const_iterator::pointer List<T>::const_iterator::operator->() const
+{
+	return &(_current->_val);
+}
+
+template<typename T>
+List<T>::const_iterator& List<T>::const_iterator::operator++()
+{
+	_current = _current->_next;
+	return *this;
+}
+
+template<typename T>
+List<T>::const_iterator List<T>::const_iterator::operator++(int)
+{
+	const_iterator result(*this);
+	++(*this);
+	return result;
+}
+
+template<typename T>
+List<T>::const_iterator& List<T>::const_iterator::operator--()
+{
+	_current = _current->_prev;
+	return *this;
+}
+
+template<typename T>
+List<T>::const_iterator List<T>::const_iterator::operator--(int)
+{
+	const_iterator result(*this);
+	--(*this);
+	return result;
+}
+
+template<typename T>
+bool List<T>::const_iterator::operator==(const List<T>::const_iterator& other) const
+{
+	return this->_current == other._current;
+}
+
+template<typename T>
+bool List<T>::const_iterator::operator!=(const List<T>::const_iterator& other) const
+{
+	return this->_current != other._current;
+}
+
+template<typename T>
+List<T>::const_iterator& List<T>::const_iterator::operator=(const const_iterator& source)
+{
+	this->_current = source._current;
+	return *this;
+}
+
+#pragma endregion
+
 
