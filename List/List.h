@@ -179,6 +179,7 @@ public:
 	void pop_front();
 	void pop_back();
 	void insert(const iterator& iter, const T& val);
+	void erase(const iterator& iter);
 
 	iterator begin();
 	iterator end();
@@ -441,6 +442,17 @@ void List<T>::insert(const List<T>::iterator& iter, const T& val)
 	iter._current->_prev = newNode;
 
 	++_size;
+}
+
+template<typename T>
+void List<T>::erase(const iterator& iter)
+{
+
+	iter._current->_prev->_next = iter._current->_next;
+	iter._current->_next->_prev = iter._current->_prev;
+
+	delete iter._current;
+	--_size;
 }
 
 #pragma endregion
