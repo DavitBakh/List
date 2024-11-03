@@ -1,12 +1,16 @@
 #pragma once
 
 #include <cstddef>
+#include <iterator>
 
 template <typename T>
 class List
 {
 
 private:
+
+#pragma region Node
+
 	struct Node
 	{
 		T _val;
@@ -20,7 +24,39 @@ private:
 	Node* _tail;
 	size_t _size;
 
+#pragma endregion
+
+
 public:
+
+#pragma region Iterator
+
+	class iterator
+	{
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = T*;
+		using reference = T&;
+		using iterator_category = std::bidirectional_iterator_tag;
+
+	private:
+		Node* _current;
+
+	public:
+		iterator(Node* ptr);
+
+		iterator& operator=(const iterator& source);
+		reference operator*() const;
+		pointer operator->() const;
+		iterator& operator++();
+		iterator operator++(int);
+		iterator& operator--();
+		iterator operator--(int);
+		bool operator==(const iterator& other) const;
+		bool operator!=(const iterator& other) const;
+	};
+
+#pragma endregion
 
 	List(size_t size = 0, const T& val = T());
 	List(const List& other);
@@ -38,6 +74,9 @@ public:
 	void push_back(const T& val);
 	void pop_front();
 	void pop_back();
+
+	iterator begin();
+	iterator end();
 
 	List& operator=(const List& other);
 
@@ -88,7 +127,7 @@ List<T>::List(size_t size, const T& val) : _head(new Node(T())), _tail(new Node(
 }
 
 template<typename T>
-List<T>::List(const List& other) : _head(new Node(T())) , _tail(new Node(T())), _size(other._size)
+List<T>::List(const List& other) : _head(new Node(T())), _tail(new Node(T())), _size(other._size)
 {
 	_head->_next = _tail;
 	_tail->_prev = _head;
@@ -117,6 +156,9 @@ List<T>::~List()
 
 template<typename T>
 List<T>::Node::Node(const T& val, Node* next, Node* prev) : _val(val), _next(next), _prev(prev) { }
+
+template<typename T>
+List<T>::iterator::iterator(Node* ptr) : _current(ptr) { }
 
 #pragma endregion
 
@@ -277,3 +319,82 @@ List<T>& List<T>::operator=(const List& other)
 }
 
 #pragma endregion
+
+#pragma region Iterator
+
+template<typename T>
+List<T>::iterator List<T>::begin()
+{
+	return iterator(_head->_next);
+}
+
+template<typename T>
+List<T>::iterator List<T>::end()
+{
+	return iterator(_tail);
+}
+
+template<typename T>
+List<T>::iterator::reference List<T>::iterator::operator*() const
+{
+	return _current->_val;
+}
+
+template<typename T>
+List<T>::iterator::pointer List<T>::iterator::operator->() const
+{
+	return &(_current->_val);
+}
+
+template<typename T>
+List<T>::iterator& List<T>::iterator::operator++()
+{
+	_current = _current->_next;
+	return *this;
+}
+
+template<typename T>
+List<T>::iterator List<T>::iterator::operator++(int)
+{
+	iterator result(*this);
+	++(*this);
+	return result;
+}
+
+template<typename T>
+List<T>::iterator& List<T>::iterator::operator--()
+{
+	_current = _current->_prev;
+	return *this;
+}
+
+template<typename T>
+List<T>::iterator List<T>::iterator::operator--(int)
+{
+	iterator result(*this);
+	--(*this);
+	return result;
+}
+
+
+template<typename T>
+bool List<T>::iterator::operator==(const List<T>::iterator& other) const
+{
+	return this->_current == other._current;
+}
+
+template<typename T>
+bool List<T>::iterator::operator!=(const List<T>::iterator& other) const
+{
+	return this->_current != other._current;
+}
+
+template<typename T>
+List<T>::iterator& List<T>::iterator::operator=(const iterator& source)
+{
+	this->_current = source._current;
+	return *this;
+}
+
+#pragma endregion
+
