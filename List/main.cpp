@@ -18,7 +18,7 @@
 #include "Tests/18InsertTest.h"
 #include "Tests/19EraseTest.h"
 #include "Tests/20MergeTest.h"
-//#include "Tests/21SortTest.h"
+#include "Tests/21SortTest.h"
 //#include "Tests/22StlCompatibilityTest.h"
 
 #include <iostream>

@@ -181,6 +181,7 @@ public:
 	void insert(const iterator& iter, const T& val);
 	void erase(const iterator& iter);
 	void merge(List& other);
+	void sort();
 
 	iterator begin();
 	iterator end();
@@ -448,6 +449,7 @@ void List<T>::insert(const List<T>::iterator& iter, const T& val)
 template<typename T>
 void List<T>::erase(const iterator& iter)
 {
+	//iteratori het petqa mi ban anel, jamanak chkar nayei std-um vonca implementac :)
 
 	iter._current->_prev->_next = iter._current->_next;
 	iter._current->_next->_prev = iter._current->_prev;
@@ -466,12 +468,12 @@ void List<T>::merge(List& other)
 
 	while (thisIter != end() && otherIter != other.end())
 	{
-		if (*(otherIter) < *(thisIter)) 
+		if (*(otherIter) < *(thisIter))
 		{
 			insert(thisIter, *(otherIter));
 			++otherIter;
 		}
-		else 
+		else
 			++thisIter;
 	}
 
@@ -482,6 +484,38 @@ void List<T>::merge(List& other)
 	}
 
 	other.clear();
+}
+
+template<typename T>
+void List<T>::sort()
+{
+	if (_size == 0 || _size == 1)
+		return;
+
+
+	size_t size = _size;
+	while (size--)
+	{
+		Node* curr = _head->_next;
+		bool isSwaped = false;
+
+		while (curr->_next != _tail)
+		{
+			if ((*curr->_val) > (*(curr->_next)->_val))
+			{
+				T temp = *(curr->_val);
+				*(curr->_val) = *(curr->_next->_val);
+				*(curr->_next->_val) = temp;
+
+				isSwaped = true;
+			}
+
+			curr = curr->_next;
+		}
+
+		if (isSwaped == false)
+			break;
+	}
 }
 
 #pragma endregion
