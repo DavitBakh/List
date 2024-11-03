@@ -39,6 +39,8 @@ public:
 	void pop_front();
 	void pop_back();
 
+	List& operator=(const List& other);
+
 	template <typename U>
 	friend bool operator==(const List<U>& lhs, const List<U>& rhs);
 
@@ -208,7 +210,7 @@ void List<T>::pop_back()
 
 #pragma endregion
 
-#pragma region Bool Operators
+#pragma region Operators
 
 template<typename T>
 bool operator==(const List<T>& lhs, const List<T>& rhs)
@@ -232,6 +234,27 @@ template<typename T>
 bool operator!=(const List<T>& lhs, const List<T>& rhs)
 {
 	return !(lhs == rhs);
+}
+
+template<typename T>
+List<T>& List<T>::operator=(const List& other)
+{
+	this->~List();
+
+	_head = new Node(T());
+	_tail = new Node(T());
+
+	_head->_next = _tail;
+	_tail->_prev = _head;
+
+	Node* curr = other._head->_next;
+	while (curr != other._tail)
+	{
+		push_back(curr->_val);
+		curr = curr->_next;
+	}
+
+	return *this;
 }
 
 #pragma endregion

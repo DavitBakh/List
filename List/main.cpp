@@ -3,7 +3,7 @@
 #include "Tests/3PopFrontBackTest.h"
 #include "Tests/4DestructorCallTest.h"
 #include "Tests/5CopyConstructorTest.h"
-//#include "Tests/6AssignmentOperatorTest.h"
+#include "Tests/6AssignmentOperatorTest.h"
 //#include "Tests/7DestructorWithAssignmentTest.h"
 //#include "Tests/8ConstFrontBackTest.h"
 //#include "Tests/9ClearTest.h"
