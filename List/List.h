@@ -35,17 +35,17 @@ public:
 
 	class iterator
 	{
+	private:
+		Node* _current;
+
+	public:
 		using value_type = T;
 		using difference_type = std::ptrdiff_t;
 		using pointer = T*;
 		using reference = T&;
 		using iterator_category = std::bidirectional_iterator_tag;
 
-	private:
-		Node* _current;
-
-	public:
-		iterator(Node* ptr);
+		iterator(Node* ptr = nullptr);
 
 		iterator& operator=(const iterator& source);
 		reference operator*() const;
@@ -60,6 +60,8 @@ public:
 		friend class const_iterator;
 		friend class List;
 	};
+
+	static_assert(std::bidirectional_iterator<iterator>);
 
 #pragma endregion
 
