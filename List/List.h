@@ -58,6 +58,7 @@ public:
 		bool operator!=(const iterator& other) const;
 
 		friend class const_iterator;
+		friend class List;
 	};
 
 #pragma endregion
@@ -87,6 +88,8 @@ public:
 		reverse_iterator operator--(int);
 		bool operator==(const reverse_iterator& other) const;
 		bool operator!=(const reverse_iterator& other) const;
+
+		friend class List;
 	};
 
 #pragma endregion
@@ -118,6 +121,7 @@ public:
 		bool operator==(const const_iterator& other) const;
 		bool operator!=(const const_iterator& other) const;
 
+		friend class List;
 	};
 
 #pragma endregion
@@ -148,6 +152,7 @@ public:
 		bool operator==(const const_reverse_iterator& other) const;
 		bool operator!=(const const_reverse_iterator& other) const;
 
+		friend class List;
 	};
 
 #pragma endregion
@@ -173,6 +178,7 @@ public:
 	void push_back(const T& val);
 	void pop_front();
 	void pop_back();
+	void insert(const iterator& iter, const T& val);
 
 	iterator begin();
 	iterator end();
@@ -204,12 +210,17 @@ List<T>::List() : _head(new Node()), _tail(new Node()), _size(0)
 }
 
 template<typename T>
-List<T>::List(size_t size) : List()
+List<T>::List(size_t size) : _head(new Node()), _tail(new Node()), _size(size)
 {
+	Node* temp = _head;
 	for (size_t i = 0; i < size; i++)
 	{
-		push_back(T());
+		temp->_next = new Node(T(), nullptr, temp);
+		temp = temp->_next;
 	}
+
+	temp->_next = _tail;
+	_tail->_prev = temp;
 }
 
 template<typename T>
@@ -351,8 +362,6 @@ const T& List<T>::back() const
 
 #pragma region Xary
 
-
-
 template<typename T>
 size_t List<T>::size()
 {
@@ -420,6 +429,18 @@ void List<T>::clear()
 	_tail->_prev = _head;
 
 	_size = 0;
+}
+
+template<typename T>
+void List<T>::insert(const List<T>::iterator& iter, const T& val)
+{
+
+	Node* newNode = new Node(val, iter._current, iter._current->_prev);
+
+	iter._current->_prev->_next = newNode;
+	iter._current->_prev = newNode;
+
+	++_size;
 }
 
 #pragma endregion
