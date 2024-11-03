@@ -154,6 +154,8 @@ public:
 	List(size_t size = 0, const T& val = T());
 	List(const List& other);
 	List(std::initializer_list<T> initList);
+	template <std::input_iterator iter>
+	List(iter begin, iter end);
 	~List();
 
 	bool empty();
@@ -252,6 +254,23 @@ List<T>::List(std::initializer_list<T> initList) : _head(new Node(T())), _tail(n
 	{
 		temp->_next = new Node(*iter, nullptr, temp);
 		temp = temp->_next;
+	}
+
+	temp->_next = _tail;
+	_tail->_prev = temp;
+}
+
+template<typename T>
+template<std::input_iterator iter>
+List<T>::List(iter begin, iter end) : _head(new Node(T())), _tail(new Node(T()))
+{
+	Node* temp = _head;
+	for (auto iter = begin; iter != end; ++iter)
+	{
+		temp->_next = new Node(*iter, nullptr, temp);
+		temp = temp->_next;
+
+		++_size;
 	}
 
 	temp->_next = _tail;
