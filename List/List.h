@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstddef>
-#include <optional>
 
 template <typename T>
 class List
