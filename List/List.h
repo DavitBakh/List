@@ -97,7 +97,7 @@ public:
 		using difference_type = std::ptrdiff_t;
 		using pointer = const T*;
 		using reference = const T&;
-		using iterator_category = std::forward_iterator_tag;
+		using iterator_category = std::bidirectional_iterator_tag;
 
 	private:
 		const Node* _current;
@@ -119,6 +119,37 @@ public:
 	};
 
 #pragma endregion
+
+#pragma region Const Reverse Iterator
+
+	class const_reverse_iterator
+	{
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const T*;
+		using reference = const T&;
+		using iterator_category = std::bidirectional_iterator_tag;
+
+	private:
+		const Node* _current;
+
+	public:
+		const_reverse_iterator(const Node* ptr);
+
+		const_reverse_iterator& operator=(const const_reverse_iterator& source);
+		reference  operator*() const;
+		pointer operator->() const;
+		const_reverse_iterator& operator++();
+		const_reverse_iterator operator++(int);
+		const_reverse_iterator& operator--();
+		const_reverse_iterator operator--(int);
+		bool operator==(const const_reverse_iterator& other) const;
+		bool operator!=(const const_reverse_iterator& other) const;
+
+	};
+
+#pragma endregion
+
 
 
 
@@ -147,6 +178,10 @@ public:
 	const_iterator end() const;
 	const_iterator cbegin() const;
 	const_iterator cend() const;
+	const_reverse_iterator rbegin() const;
+	const_reverse_iterator rend() const;
+	const_reverse_iterator crbegin() const;
+	const_reverse_iterator crend() const;
 
 	List& operator=(const List& other);
 
@@ -237,7 +272,10 @@ template<typename T>
 List<T>::const_iterator::const_iterator(const Node* ptr) : _current(ptr) { }
 
 template<typename T>
-List<T>::const_iterator::const_iterator(const iterator& iter) : _current(iter._current) {}
+List<T>::const_iterator::const_iterator(const iterator& iter) : _current(iter._current) { }
+
+template<typename T>
+List<T>::const_reverse_iterator::const_reverse_iterator(const Node* ptr) : _current(ptr) { }
 
 #pragma endregion
 
@@ -643,5 +681,96 @@ List<T>::const_iterator& List<T>::const_iterator::operator=(const const_iterator
 }
 
 #pragma endregion
+
+#pragma region Const Reverse Iterator
+
+template<typename T>
+List<T>::const_reverse_iterator List<T>::rbegin() const
+{
+	return const_reverse_iterator(_tail->_prev);
+}
+
+template<typename T>
+List<T>::const_reverse_iterator List<T>::rend() const
+{
+	return const_reverse_iterator(_head);
+}
+
+template<typename T>
+List<T>::const_reverse_iterator List<T>::crbegin() const
+{
+	return const_reverse_iterator(_tail->_prev);
+}
+
+template<typename T>
+List<T>::const_reverse_iterator List<T>::crend() const
+{
+	return const_reverse_iterator(_head);
+}
+
+template<typename T>
+List<T>::const_reverse_iterator::reference List<T>::const_reverse_iterator::operator*() const
+{
+	return _current->_val;
+}
+
+template<typename T>
+List<T>::const_reverse_iterator::pointer List<T>::const_reverse_iterator::operator->() const
+{
+	return &(_current->_val);
+}
+
+template<typename T>
+List<T>::const_reverse_iterator& List<T>::const_reverse_iterator::operator++()
+{
+	_current = _current->_prev;
+	return *this;
+}
+
+template<typename T>
+List<T>::const_reverse_iterator List<T>::const_reverse_iterator::operator++(int)
+{
+	const_reverse_iterator result(*this);
+	++(*this);
+	return result;
+}
+
+template<typename T>
+List<T>::const_reverse_iterator& List<T>::const_reverse_iterator::operator--()
+{
+	_current = _current->_next;
+	return *this;
+}
+
+template<typename T>
+List<T>::const_reverse_iterator List<T>::const_reverse_iterator::operator--(int)
+{
+	const_reverse_iterator result(*this);
+	--(*this);
+	return result;
+}
+
+template<typename T>
+bool List<T>::const_reverse_iterator::operator==(const List<T>::const_reverse_iterator& other) const
+{
+	return this->_current == other._current;
+}
+
+template<typename T>
+bool List<T>::const_reverse_iterator::operator!=(const List<T>::const_reverse_iterator& other) const
+{
+	return this->_current != other._current;
+}
+
+template<typename T>
+List<T>::const_reverse_iterator& List<T>::const_reverse_iterator::operator=(const const_reverse_iterator& source)
+{
+	this->_current = source._current;
+	return *this;
+}
+
+
+#pragma endregion
+
 
 
