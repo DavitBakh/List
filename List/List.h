@@ -32,6 +32,7 @@ public:
 	T& back();
 	const T& back() const;
 	size_t size();
+	void clear();
 
 	void push_front(const T& val);
 	void push_back(const T& val);
@@ -110,6 +111,8 @@ List<T>::~List()
 		delete p;
 		p = p_next;
 	}
+
+	_size = 0;
 }
 
 template<typename T>
@@ -205,6 +208,23 @@ void List<T>::pop_back()
 
 	delete temp;
 	--_size;
+}
+
+template<typename T>
+void List<T>::clear()
+{
+	Node* p = _head->_next;
+	while (p != _tail)
+	{
+		Node* p_next = p->_next;
+		delete p;
+		p = p_next;
+	}
+
+	_head->_next = _tail;
+	_tail->_prev = _head;
+
+	_size = 0;
 }
 
 #pragma endregion
