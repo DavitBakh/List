@@ -12,7 +12,7 @@
 #include "Tests/12ConstIteratorTest.h"
 #include "Tests/13ConstReverseIteratorTest.h"
 #include "Tests/14MemberAccessIteratorTest.h"
-//#include "Tests/15InitializerListConstructorTest.h"
+#include "Tests/15InitializerListConstructorTest.h"
 //#include "Tests/16IteratorConstructibleTest.h"
 //#include "Tests/17ClassWithNoDefaultConstructorTest.h"
 //#include "Tests/18InsertTest.h"

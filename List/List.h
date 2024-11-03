@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include <initializer_list>
 
 template <typename T>
 class List
@@ -25,7 +26,6 @@ private:
 	size_t _size;
 
 #pragma endregion
-
 
 public:
 
@@ -151,10 +151,9 @@ public:
 #pragma endregion
 
 
-
-
 	List(size_t size = 0, const T& val = T());
 	List(const List& other);
+	List(std::initializer_list<T> initList);
 	~List();
 
 	bool empty();
@@ -243,6 +242,20 @@ List<T>::List(const List& other) : _head(new Node(T())), _tail(new Node(T())), _
 		push_back(curr->_val);
 		curr = curr->_next;
 	}
+}
+
+template<typename T>
+List<T>::List(std::initializer_list<T> initList) : _head(new Node(T())), _tail(new Node(T())), _size(initList.size())
+{
+	Node* temp = _head;
+	for (auto iter = initList.begin(); iter != initList.end(); ++iter)
+	{
+		temp->_next = new Node(*iter, nullptr, temp);
+		temp = temp->_next;
+	}
+
+	temp->_next = _tail;
+	_tail->_prev = temp;
 }
 
 template<typename T>
