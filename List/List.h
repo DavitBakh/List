@@ -24,6 +24,7 @@ private:
 public:
 
 	List(size_t size = 0, const T& val = T());
+	List(const List& other);
 	~List();
 
 	bool empty();
@@ -37,6 +38,9 @@ public:
 	void push_back(const T& val);
 	void pop_front();
 	void pop_back();
+
+	template <typename U>
+	friend bool operator==(const List<U>& lhs, const List<U>& rhs);
 
 };
 
@@ -79,6 +83,20 @@ List<T>::List(size_t size, const T& val) : _head(new Node(T())), _tail(new Node(
 
 	temp->_next = _tail;
 	_tail->_prev = temp;
+}
+
+template<typename T>
+List<T>::List(const List& other) : _head(new Node(T())) , _tail(new Node(T())), _size(other._size)
+{
+	_head->_next = _tail;
+	_tail->_prev = _head;
+
+	Node* curr = other._head->_next;
+	while (curr != other._tail)
+	{
+		push_back(curr->_val);
+		curr = curr->_next;
+	}
 }
 
 template<typename T>
@@ -186,6 +204,34 @@ void List<T>::pop_back()
 
 	delete temp;
 	--_size;
+}
+
+#pragma endregion
+
+#pragma region Bool Operators
+
+template<typename T>
+bool operator==(const List<T>& lhs, const List<T>& rhs)
+{
+	typename List<T>::Node* lhsP = lhs._head->_next;
+	typename List<T>::Node* rhsP = rhs._head->_next;
+
+	while (lhsP != nullptr && rhsP != nullptr)
+	{
+		if (lhsP->_val != rhsP->_val)
+			return false;
+
+		lhsP = lhsP->_next;
+		rhsP = rhsP->_next;
+	}
+
+	return lhsP == rhsP;
+}
+
+template<typename T>
+bool operator!=(const List<T>& lhs, const List<T>& rhs)
+{
+	return !(lhs == rhs);
 }
 
 #pragma endregion
