@@ -1,5 +1,5 @@
 #include "Tests/1BasicConstructorsTest.h"
-//#include "Tests/2PushFrontBackTest.h"
+#include "Tests/2PushFrontBackTest.h"
 //#include "Tests/3PopFrontBackTest.h"
 //#include "Tests/4DestructorCallTest.h"
 //#include "Tests/5CopyConstructorTest.h"

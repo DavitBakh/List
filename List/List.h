@@ -13,7 +13,7 @@ private:
 		Node* _next;
 		Node* _prev;
 
-		Node(const T& val, Node* next = nullptr, Node* prew = nullptr);
+		Node(const T& val, Node* next = nullptr, Node* prev = nullptr);
 	};
 
 	Node* _head;
@@ -30,6 +30,11 @@ public:
 	T& back();
 	const T& back() const;
 	size_t size();
+
+	void push_front(const T& val);
+	void push_back(const T& val);
+
+
 };
 
 #pragma region CtorsAndDestructors
@@ -102,4 +107,26 @@ template<typename T>
 size_t List<T>::size()
 {
 	return _size;
+}
+
+template<typename T>
+void List<T>::push_front(const T& val)
+{
+	_head = new Node(val, _head);
+
+	if (_size == 0)
+		_tail = _head;
+
+	++_size;
+}
+
+template<typename T>
+void List<T>::push_back(const T& val)
+{
+	_tail = new Node(val, nullptr, _tail);
+
+	if (_size == 0)
+		_head = _tail;
+
+	++_size;
 }
