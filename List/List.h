@@ -24,6 +24,7 @@ private:
 public:
 
 	List(size_t size = 0, const T& val = T());
+	~List();
 
 	bool empty();
 	T& front();
@@ -78,6 +79,18 @@ List<T>::List(size_t size, const T& val) : _head(new Node(T())), _tail(new Node(
 
 	temp->_next = _tail;
 	_tail->_prev = temp;
+}
+
+template<typename T>
+List<T>::~List()
+{
+	Node* p = _head;
+	while (p != nullptr)
+	{
+		Node* p_next = p->_next;
+		delete p;
+		p = p_next;
+	}
 }
 
 template<typename T>
