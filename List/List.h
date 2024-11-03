@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <optional>
 
 template <typename T>
 class List
@@ -33,14 +34,15 @@ public:
 
 	void push_front(const T& val);
 	void push_back(const T& val);
-
+	void pop_front();
+	void pop_back();
 
 };
 
 #pragma region CtorsAndDestructors
 
 template<typename T>
-List<T>::List(size_t size, const T& val) : _head(nullptr), _tail(nullptr), _size(size)
+List<T>::List(size_t size, const T& val) : _head(new Node(T())), _tail(new Node(T())), _size(size)
 {
 	/*Node** curNode = &_head;
 	for (std::size_t i = 0; i < size; i++)
@@ -49,7 +51,9 @@ List<T>::List(size_t size, const T& val) : _head(nullptr), _tail(nullptr), _size
 		curNode = &(*curNode)->_next;
 	}*/
 
-	if (size == 0)
+
+
+	/*if (size == 0)
 		return;
 
 	_head = new Node(val);
@@ -62,7 +66,18 @@ List<T>::List(size_t size, const T& val) : _head(nullptr), _tail(nullptr), _size
 		curr = curr->_next;
 	}
 
-	_tail = curr;
+	_tail = curr;*/
+
+
+	Node* temp = _head;
+	for (size_t i = 0; i < size; i++)
+	{
+		temp->_next = new Node(val, nullptr, temp);
+		temp = temp->_next;
+	}
+
+	temp->_next = _tail;
+	_tail->_prev = temp;
 }
 
 template<typename T>
@@ -70,37 +85,42 @@ List<T>::Node::Node(const T& val, Node* next, Node* prev) : _val(val), _next(nex
 
 #pragma endregion
 
-
+#pragma region GetElement
 
 template<typename T>
 bool List<T>::empty()
 {
-	return _head == nullptr;
+	return _size == 0;
 }
 
 template<typename T>
 T& List<T>::front()
 {
-	return _head->_val;
+	return _head->_next->_val;
 }
 
 template<typename T>
 const T& List<T>::front() const
 {
-	return _head->_val;
+	return _head->_next->_val;
 }
 
 template<typename T>
 T& List<T>::back()
 {
-	return _tail->_val;
+	return _tail->_prev->_val;
 }
 
 template<typename T>
 const T& List<T>::back() const
 {
-	return _tail->_val;
+	return _tail->_prev->_val;
 }
+
+#pragma endregion
+
+#pragma region Xary
+
 
 
 template<typename T>
@@ -112,10 +132,8 @@ size_t List<T>::size()
 template<typename T>
 void List<T>::push_front(const T& val)
 {
-	_head = new Node(val, _head);
-
-	if (_size == 0)
-		_tail = _head;
+	_head->_next = new Node(val, _head->_next, _head);
+	_head->_next->_next->_prev = _head->_next;
 
 	++_size;
 }
@@ -123,10 +141,38 @@ void List<T>::push_front(const T& val)
 template<typename T>
 void List<T>::push_back(const T& val)
 {
-	_tail = new Node(val, nullptr, _tail);
-
-	if (_size == 0)
-		_head = _tail;
+	_tail->_prev = new Node(val, _tail, _tail->_prev);
+	_tail->_prev->_prev->_next = _tail->_prev;
 
 	++_size;
 }
+
+template<typename T>
+void List<T>::pop_front()
+{
+	if (_head->_next == _tail)
+		return;
+
+	Node* temp = _head->_next;
+	_head->_next = temp->_next;
+	_head->_next->_prev = _head;
+
+	delete temp;
+	--_size;
+}
+
+template<typename T>
+void List<T>::pop_back()
+{
+	if (_head->_next == _tail)
+		return;
+
+	Node* temp = _tail->_prev;
+	_tail->_prev = temp->_prev;
+	_tail->_prev->_next = _tail;
+
+	delete temp;
+	--_size;
+}
+
+#pragma endregion
